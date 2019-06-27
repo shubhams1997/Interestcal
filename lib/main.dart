@@ -19,7 +19,6 @@ void main() {
   ));
 }
 
-
 class SIForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -28,11 +27,12 @@ class SIForm extends StatefulWidget {
 }
 
 class _SIFormState extends State<SIForm> {
+  var _formkey = GlobalKey<FormState>();
   var _currencies = ["Rupees", "Dollor", "Pound", "Other"];
   var _displayReslut = "";
   var _currentItemSelected = "";
-  
-  void initState(){
+
+  void initState() {
     super.initState();
     _currentItemSelected = _currencies[0];
   }
@@ -43,23 +43,35 @@ class _SIFormState extends State<SIForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Form(
+      key: _formkey,
       child: ListView(
         shrinkWrap: true,
         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         children: <Widget>[
-          
           Row(
             children: <Widget>[
               Expanded(
                 child: Container(
-                  child: TextField(
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Please insert Principal amount";
+                      }
+                      if (!isNumeric(value)) {
+                        return "Must be a number";
+                      }
+                    },
                     controller: principalController,
                     style: TextStyle(
                       color: Colors.white,
                     ),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      errorStyle: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 13,
+                      ),
                       labelText: "Total loan amount",
                       labelStyle: TextStyle(color: Colors.white54),
                       fillColor: Color.fromRGBO(63, 71, 77, 1),
@@ -80,13 +92,25 @@ class _SIFormState extends State<SIForm> {
               ),
               Expanded(
                 child: Container(
-                  child: TextField(
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Time period (months)";
+                      }
+                      if (!isNumeric(value)) {
+                        return "Must be a number";
+                      }
+                    },
                     controller: termController,
                     style: TextStyle(
                       color: Colors.white,
                     ),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      errorStyle: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 13,
+                      ),
                       labelText: "Term (months)",
                       labelStyle: TextStyle(color: Colors.white54),
                       fillColor: Color.fromRGBO(63, 71, 77, 1),
@@ -111,13 +135,25 @@ class _SIFormState extends State<SIForm> {
             children: <Widget>[
               Expanded(
                 child: Container(
-                  child: TextField(
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Enter Rate of Interest";
+                      }
+                      if (!isNumeric(value)) {
+                        return "Must be a number";
+                      }
+                    },
                     controller: rateController,
                     style: TextStyle(
                       color: Colors.white,
                     ),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      errorStyle: TextStyle(
+                        color: Colors.greenAccent,
+                        fontSize: 13,
+                      ),
                       labelText: "Interest rate(%)",
                       labelStyle: TextStyle(color: Colors.white54),
                       fillColor: Color.fromRGBO(63, 71, 77, 1),
@@ -153,7 +189,6 @@ class _SIFormState extends State<SIForm> {
                               dropDownStringItem,
                               style: TextStyle(
                                 color: Colors.white,
-                                // backgroundColor: Colors.black,
                               ),
                             ),
                           );
@@ -190,7 +225,9 @@ class _SIFormState extends State<SIForm> {
                     color: Colors.black38,
                     onPressed: () {
                       setState(() {
-                        _displayReslut = _calculateTotalReturn();
+                        if (_formkey.currentState.validate()) {
+                          this._displayReslut = _calculateTotalReturn();
+                        }
                       });
                     },
                     child: Text(
@@ -223,10 +260,14 @@ class _SIFormState extends State<SIForm> {
               ),
             ],
           ),
-
-          Text(_displayReslut,
-            style: TextStyle(
-              color: Colors.white,
+          Container(
+            margin: EdgeInsets.fromLTRB(30, 30, 25, 0),
+            child: Text(
+              _displayReslut,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
           ),
         ],
@@ -238,19 +279,24 @@ class _SIFormState extends State<SIForm> {
     double principal = double.parse(principalController.text);
     double rate = double.parse(rateController.text);
     double term = double.parse(termController.text);
-
-    double interest = (principal * rate * term/12 )/100;
+    double interest = (principal * rate * term / 12) / 100;
     double totalAmountPayable = principal + interest;
-    return "After $term months, your investment will be $_currentItemSelected $totalAmountPayable where the interest is $interest";
+    return "After ${term.toStringAsFixed(0)} months,\nYour investment will be $_currentItemSelected ${totalAmountPayable.toStringAsFixed(2)} \nInterest is ${interest.toStringAsFixed(2)}";
   }
 
-  void _reset(){
-   principalController.text ="";
-   rateController.text = "";
-   termController.text ="";
-   _displayReslut = "";
-   _currentItemSelected = _currencies[0];
+  void _reset() {
+    principalController.text = "";
+    rateController.text = "";
+    termController.text = "";
+    _displayReslut = "";
+    _currentItemSelected = _currencies[0];
+  }
 
+  bool isNumeric(String value) {
+    if (value == null) {
+      return false;
+    }
+    return double.parse(value, (e) => null) != null;
   }
 }
 
