@@ -8,9 +8,9 @@ A new Flutter project that Calculate Simple interest.
 
 This project is a starting point for a Flutter application.
 
-![Screen Shot](https://github.com/shubhamsharma199782/Interestcal/blob/master/interestcal_screenshot)
+![Screen Shot](https://github.com/shubhamsharma199782/Interestcal/blob/master/interestcal_screenshot.png)
 
-![Screen Shot](https://github.com/shubhamsharma199782/Interestcal/blob/master/interestcal_screenshot_error)
+![Screen Shot](https://github.com/shubhamsharma199782/Interestcal/blob/master/interestcal_screenshot_error.png)
 
 A few resources to get you started if this is your first Flutter project:
 
